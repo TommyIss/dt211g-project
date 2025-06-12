@@ -1,0 +1,54 @@
+@use 'variables';
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    max-width: 1600px;
+    margin: 0 auto;
+    font-family: variables.$font-family;
+}
+
+header {
+    background-color: variables.$header-footer-background;
+    color: variables.$header-footer-color;
+    padding: 1% 0;
+    h1 {
+        text-align: center;
+    }
+}
+
+main {
+    min-height: 500px;
+    max-width: 1000px;
+    margin: 1% auto;
+    p {
+        max-width: 60ch;
+    }
+    form {
+        padding: 1%;
+        background-color: variables.$hover-color;
+        input {
+            margin: 1% 0;
+        }
+    }
+    #btn {
+        padding: 0 1%;
+        background-color: variables.$header-footer-background;
+        color: variables.$header-footer-color;
+        cursor: pointer;
+        &:hover {
+            background-color: variables.$hover-color;
+            color: black;
+        }
+    }
+}
+
+footer {
+    background-color: variables.$header-footer-background;
+    color: variables.$header-footer-color;
+    text-align: center;
+    padding: 1% 0;
+}

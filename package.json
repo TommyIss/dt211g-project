@@ -1,7 +1,7 @@
 {
   "name": "project",
   "version": "1.0.0",
-  "main": "src/index.html",
+  "source": "src/index.html",
   "scripts": {
     "start": "parcel --open chrome",
     "build": "parcel build"
@@ -11,6 +11,7 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@parcel/transformer-sass": "^2.15.2",
     "parcel": "^2.15.2"
   }
 }
