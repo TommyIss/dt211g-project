@@ -1,0 +1,16 @@
+{
+  "name": "project",
+  "version": "1.0.0",
+  "main": "src/index.html",
+  "scripts": {
+    "start": "parcel --open chrome",
+    "build": "parcel build"
+  },
+  "browsersList": ">0.5%, last 2 versions, not dead",
+  "author": "Tommy Issa",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "parcel": "^2.15.2"
+  }
+}
