@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projekt</title>
     <link rel="stylesheet" href="css/main.scss">
+    <script type="module" src="js/main.js"></script>
 </head>
 <body>
     <!-- Sidhuvud -->
@@ -20,27 +21,37 @@
         <fieldset>
             <legend>Fyll i formuläret</legend>
             <form action="">
-            <label for="length">Längd:</label>
-            <input type="text" id="length" placeholder="Ange längd i cm">
-            <br>
-            <label for="weight">Vikt:</label>
-            <input type="text" id="weight" placeholder="Ange vikt i kg">
-            <br>
-            <label for="age">Ålder:</label>
-            <input type="text" id="age">
-            <br>
-            <label for="sex">Kön:</label>
-            <label for="male">Man</label>
-            <input type="radio" id="male" name="sex">
-            <label for="female">Kvinna</label>
-            <input type="radio" name="sex" id="female">
-            <br>
-            <button id="btn">Tryck här</button>
+                <label for="length">Längd:</label>
+                <input type="text" id="length" placeholder="Ange längd i cm">
+                
+                <br>
+                <label for="weight">Vikt:</label>
+                <input type="text" id="weight" placeholder="Ange vikt i kg">
+
+                <br>
+                <label for="age">Ålder:</label>
+                <input type="text" id="age">
+
+                <br>
+                <label for="sex">Kön:</label>
+                <label for="male">Man</label>
+                <input type="radio" id="male" name="sex">
+                <label for="female">Kvinna</label>
+                <input type="radio" name="sex" id="female">
+                
+                <br>
+                <button id="btn">Tryck här</button>
             </form>
         </fieldset>
         <section>
             <h2>Resultat</h2>
-            <div id="results"></div>
+            <div id="results">
+                <div id="recommendation"></div>
+                <div id="caloric-needs"></div>
+                <div id="macronutrients-diagram"></div>
+                <div id="vitamin-diagram"></div>
+                <div id="minerals-diagram"></div>
+            </div>
         </section>
     </main>
 

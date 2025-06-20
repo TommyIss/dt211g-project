@@ -1,0 +1,359 @@
+"use strict";
+
+// Variabler
+let lengthInput = document.getElementById('length');
+let weightInput = document.getElementById('weight');
+let ageInput = document.getElementById('age');
+let maleChoice = document.getElementById('male');
+let femaleChoice = document.getElementById('female');
+let btnEl = document.getElementById('btn');
+let caloricDiv = document.getElementById('caloric-needs');
+let macronutrientsDiagram = document.getElementById('macronutrients-diagram');
+let vitaminDiagram = document.getElementById('vitamin-diagram');
+let mineralsDiagram = document.getElementById('minerals-diagram');
+let recommendationDiv = document.getElementById('recommendation');
+
+
+// Eventlyssnare
+btnEl.addEventListener('click', function(event){   event.preventDefault();     
+    getData();
+});
+
+// Funktioner
+async function getData() {
+    let lengthValue = lengthInput.value;
+    let weightValue = weightInput.value;
+    let url = `https://api.apiverve.com/v1/bmicalculator?weight=${weightValue}&height=${lengthValue}&unit=metric`;
+
+    try {
+        let response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                "x-api-key": "83d64081-ad76-49a6-9094-2d3e02ebf442"
+            }
+        });
+
+        if(!response.ok) {
+            throw new Error('Fel vid anslutning till data');
+        }
+        let data = await response.json();
+        
+        printAnalys(data.data);
+        getNutrition(data.data.bmi);
+    
+    } catch (error) {
+        console.error('Error: ', error);
+    }
+}
+
+/**
+ * Rekommendation beroende på bmi
+ */
+function printAnalys(data) {
+    recommendationDiv.innerHTML = '';
+    
+    let dataList = document.createElement('ul');
+    let bmiData = document.createElement('li');
+    bmiData.textContent = `Din BMI: ${data.bmi}`;
+
+    let riskData = document.createElement('li');
+    riskData.textContent = `Risk: ${data.risk}`;
+    
+    let summaryData = document.createElement('li');
+    summaryData.textContent = `Sammanfattning ${data.summary}`;
+
+    let recommendationData = document.createElement('li');
+    recommendationData.textContent = `Rekommendation: ${data.recommendation}`;
+
+    dataList.appendChild(bmiData);
+    dataList.appendChild(riskData);
+    dataList.appendChild(summaryData);
+    dataList.appendChild(recommendationData);
+
+    recommendationDiv.appendChild(dataList);
+}
+
+import ApexCharts from "apexcharts";
+
+/**
+ * Funktion för att hämta nutration-data
+ */
+async function getNutrition(bmi) {
+    // Rekommenderat aktivitetnivå
+    let activityLevel = '';
+    if(bmi < 18.5) { activityLevel = 'Inactive';}
+    if(bmi >= 18.5 && bmi < 25) { activityLevel = 'Active';}
+    if(bmi >= 25 && bmi < 30) { activityLevel = 'Low Active';}
+    if(bmi >= 30) { activityLevel = 'Very Active';}
+    
+    let lengthValue = lengthInput.value;
+    let weightValue = weightInput.value;
+    let ageValue = ageInput.value;
+    let genderChoice = '';
+
+    // If-sats för att kontrollera man eller kvinna
+    if(maleChoice.checked) {
+        genderChoice = 'male';
+    } else if(femaleChoice.checked) {
+        genderChoice = 'female';
+    }
+    // API-länk
+    let url = `https://nutrition-calculator.p.rapidapi.com/api/nutrition-info?measurement_units=met&sex=${genderChoice}&age_value=${ageValue}&age_type=yrs&cm=${lengthValue}&kilos=${weightValue}&activity_level=${activityLevel}`
+
+    try {
+        let response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'X-RapidAPI-Key': '841b9b9cc7msha4c8304c266a29fp1aa6ffjsnd6a78fb814cd',
+                'X-RapidAPI-Host': 'nutrition-calculator.p.rapidapi.com'
+            }
+        });
+        
+        if(!response.ok) {
+            throw new Error('Fel vid anslutning till näringsApi');
+        }
+
+        let data = await response.json();
+
+        
+        printCloricsNeed(data.BMI_EER);
+
+
+        let protein = data.macronutrients_table['macronutrients-table'].find(item => item[0] === 'Protein');
+        let carbs = data.macronutrients_table['macronutrients-table'].find(item => item[0] === 'Carbohydrate');
+        let fat = data.macronutrients_table['macronutrients-table'].find(item => item[0] === 'Fat');
+        let fibers = data.macronutrients_table['macronutrients-table'].find(item => item[0] === 'Total Fiber');
+
+        printMacronutrientsDiagram(protein, carbs, fat, fibers);
+        
+        
+        
+        // Vitaminer
+        let vitaminA = data.vitamins_table['vitamins-table'].find(item => item[0] === 'Vitamin A');
+        let vitaminC = data.vitamins_table['vitamins-table'].find(item => item[0] === 'Vitamin C');
+        let vitaminD = data.vitamins_table['vitamins-table'].find(item => item[0] === 'Vitamin D');
+        let vitaminB6 = data.vitamins_table['vitamins-table'].find(item => item[0] === 'Vitamin B6');
+        let vitaminB12 =data.vitamins_table['vitamins-table'].find(item => item[0] === 'Vitamin B12');
+        
+        
+        printVitaminsDiagram(vitaminA, vitaminC, vitaminD, vitaminB6, vitaminB12);
+        
+        // Mineraler
+        let calcium = data.minerals_table['essential-minerals-table'].find(item => item[0] === 'Calcium');
+        let iron = data.minerals_table['essential-minerals-table'].find(item => item[0] === 'Iron');
+        let magnesuim = data.minerals_table['essential-minerals-table'].find(item => item[0] === 'Magnesium');
+        let zinc = data.minerals_table['essential-minerals-table'].find(item => item[0] === 'Zinc');
+        let potassium = data.minerals_table['essential-minerals-table'].find(item => item[0] === 'Potassium');
+         
+        printMineralsDiagram(calcium, iron, magnesuim, zinc, potassium);
+
+    } catch (error) {
+        console.error('Error: ' + error);
+    }
+}
+
+// Funktion för kaloribehov
+function printCloricsNeed(data) {
+    caloricDiv.innerHTML = '';
+
+    let caloryTitle = document.createElement('h3');
+    caloryTitle.textContent = 'Ditt dagliga kaloribehov';
+
+    let caloricParagraph = document.createElement('p');
+    caloricParagraph.textContent = data['Estimated Daily Caloric Needs'];
+    caloricDiv.appendChild(caloryTitle);
+    caloricDiv.appendChild(caloricParagraph);
+}
+
+// // Funktion för att skapa diagram rekommenderade näringsinnehåll
+function printMacronutrientsDiagram(protein, carbs, fat, fibers) {
+
+    macronutrientsDiagram.innerHTML = '';
+
+    let proteinValue = parseFloat(protein[1].split(' ')[0]);
+    let carbsValue = parseFloat(carbs[1].split(' ')[0]);
+    let fatValue = parseFloat(fat[1].split(' ')[0]);
+    let fibersValue = parseFloat(fibers[1].split(' ')[0]);
+    
+    let options = {
+        chart: {
+            type: 'pie',
+            height: '600px',
+            width: '100%'
+        },
+        title: {
+            text: 'Dagligt Näringsbehöv',
+            align: 'center',
+            style: {
+                fontSize: '18px',
+                fontWeight: 'bold'
+            }
+        },
+        series: [
+            proteinValue,
+            carbsValue,
+            fatValue,
+            fibersValue
+        ],
+        labels: [
+            `${protein[0]}, ${proteinValue}g`,
+            `${carbs[0]}, ${carbsValue}g`,
+            `${fat[0]}, ${fatValue}g`,
+            `${fibers[0]}, ${fibersValue}g`
+        ],
+        style: {
+            fontSize: '0.9em'
+        },
+        dataLabels: {
+            style: {
+                fontSize: '0.9em'
+            }
+        },
+        fill: {
+            colors: ['red', 'green', 'blue', 'yellow']
+        }
+    }
+
+    let chart = new ApexCharts(macronutrientsDiagram, options);
+    chart.render();
+}
+
+// Funktion för att skapa diagram för rekommenderade vitaminer
+function printVitaminsDiagram(vitaminA, vitaminC, vitaminD, vitaminB6, vitaminB12) {
+
+    vitaminDiagram.innerHTML = '';
+
+    let vitaminAValue = parseFloat(vitaminA[1].split(' ')[0]) / 1000; // För omvandla till mg
+    let vitaminCValue = parseFloat(vitaminC[1].split(' ')[0]);
+    let vitaminDValue = parseFloat(vitaminD[1].split(' ')[0]) / 1000;
+    let vitaminB6Value = parseFloat(vitaminB6[1].split(' ')[0]);
+    let vitaminB12Value = parseFloat(vitaminB12[1].split(' ')[0]) / 1000;
+
+    let options = {
+        chart: {
+            type: 'donut',
+            height: '600px',
+            width: '100%'
+        },
+        title: {
+            text: 'Dagligt Vitaminintag',
+            align: 'center',
+            style: {
+                fontSize: '18px',
+                fontWeight: 'bold'
+            }
+        },
+        series: [
+            vitaminAValue,
+            vitaminCValue,
+            vitaminDValue,
+            vitaminB6Value,
+            vitaminB12Value
+        ],
+        labels: [
+            `${vitaminA[0]}, ${vitaminAValue}mg`,
+            `${vitaminC[0]}, ${vitaminCValue}mg`,
+            `${vitaminD[0]}, ${vitaminDValue}mg`,
+            `${vitaminB6[0]}, ${vitaminB6Value}mg`,
+            `${vitaminB12[0]}, ${vitaminB12Value}mg`
+        ],
+        legend: {
+            posistion: 'bottom'
+        },
+        colors: ['aqua' , 'crimson', 'yellow', 'green', 'orange']
+    };
+
+    let chart = new ApexCharts(vitaminDiagram, options);
+
+    chart.render();
+}
+
+// Funktion för att skapa diagram rekommenderade mineraler
+function printMineralsDiagram(calcium, iron, magnesuim, zinc, potassium) {
+
+    mineralsDiagram.innerHTML = '';
+
+    let calciumValue = parseFloat(calcium[1].split(' ')[0]);
+    let ironValue = parseFloat(iron[1].split(' ')[0]);
+    let magnesuimValue = parseFloat(magnesuim[1].split(' ')[0]);
+    let zincValue = parseFloat(zinc[1].split(' ')[0]);
+    let potassiumValue = parseFloat(potassium[1].split(' ')[0]);
+
+    
+
+    let options = {
+        chart: {
+            type: 'bar',
+            height: '600px',
+            weight: '100%'
+        },
+        title: {
+            text: 'Mineralers behov',
+            align: 'center',
+            style: {
+                fontSize: '18px',
+                fontWeight: 'bold'
+            }
+        },
+        series: [
+            {
+                name: 'Mineraler',
+                data: [
+                    calciumValue,
+                    ironValue,
+                    magnesuimValue,
+                    zincValue,
+                    potassiumValue
+                ],
+                style: {
+                    fontSize: '18px',
+                    fontWeight: 'bold'
+                }
+            }
+        ],
+        xaxis: {
+            categories: [
+                `${calcium[0]}, ${calciumValue}mg`,
+                `${iron[0]}, ${ironValue}mg`,
+                `${magnesuim[0]}, ${magnesuimValue}mg`,
+                `${zinc[0]}, ${zincValue}mg`,
+                `${potassium[0]}, ${potassiumValue}mg`
+            ],
+            labels: {
+                style: {
+                    fontSize: '1em'
+                }
+            }
+        },
+        fill: {
+            colors: ['grey']
+        }
+    }
+
+    let chart = new ApexCharts(mineralsDiagram, options);
+    chart.render();
+}
+
+/**
+ * 
+ */
+
+
+// Skriva ut närings rekommendation
+
+/**
+ * Funktion för att översätter response från engelska till Svenska
+ */
+
+async function translateToSwedish(text) {
+    // Google translate API
+    let url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=sv&dt=t&q=${encodeURIComponent(text)}`;
+
+    try {
+        let response = await fetch(url);
+        let data = await response.json();
+        return data[0][0][0];
+    } catch(error) {
+        console.error('Fel vid översättning');
+    }
+}
