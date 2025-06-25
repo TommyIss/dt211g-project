@@ -1,0 +1,12 @@
+@use 'variables';
+
+@mixin theme-color($theme) {
+
+    @if $theme == 'dark' {
+        background-color: darken(variables.$main-background, 40%);
+        color: lighten(variables.$main-color, 60%);
+    } @else {
+        background-color: lighten(variables.$main-background, 30%);
+        color: darken(variables.$main-color, 20%);
+    }
+}

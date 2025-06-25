@@ -13,6 +13,18 @@ let vitaminDiagram = document.getElementById('vitamin-diagram');
 let mineralsDiagram = document.getElementById('minerals-diagram');
 let recommendationDiv = document.getElementById('recommendation');
 
+let isDark = isDarkTheme();
+let fontColor = isDark ? 'white': 'black'; 
+let themeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+themeQuery.addEventListener('change', (e) => {
+    isDark = e.matches;
+    fontColor = isDark ? 'white': 'black';
+
+    // Uppdatera typsnitt-färg i diagram
+    getData();
+
+});
 
 // Eventlyssnare
 btnEl.addEventListener('click', function(event){   event.preventDefault();     
@@ -165,6 +177,11 @@ function printCloricsNeed(data) {
     caloricDiv.appendChild(caloricParagraph);
 }
 
+function reRenderCharts() {
+    printMacronutrientsDiagram(protein, carbs, fat, fibers);
+    printVitaminsDiagram(vitaminA, vitaminC, vitaminD, vitaminB6, vitaminB12);
+    printMineralsDiagram(calcium, iron, magnesuim, zinc, potassium);
+}
 // // Funktion för att skapa diagram rekommenderade näringsinnehåll
 function printMacronutrientsDiagram(protein, carbs, fat, fibers) {
 
@@ -175,10 +192,12 @@ function printMacronutrientsDiagram(protein, carbs, fat, fibers) {
     let fatValue = parseFloat(fat[1].split(' ')[0]);
     let fibersValue = parseFloat(fibers[1].split(' ')[0]);
     
+    
+
     let options = {
         chart: {
             type: 'pie',
-            height: '600px',
+            height: '500px',
             width: '100%'
         },
         title: {
@@ -186,7 +205,8 @@ function printMacronutrientsDiagram(protein, carbs, fat, fibers) {
             align: 'center',
             style: {
                 fontSize: '18px',
-                fontWeight: 'bold'
+                fontWeight: 'bold',
+                color: fontColor
             }
         },
         series: [
@@ -201,16 +221,25 @@ function printMacronutrientsDiagram(protein, carbs, fat, fibers) {
             `${fat[0]}, ${fatValue}g`,
             `${fibers[0]}, ${fibersValue}g`
         ],
-        style: {
-            fontSize: '0.9em'
-        },
         dataLabels: {
+            enabled: true,
             style: {
-                fontSize: '0.9em'
+                fontSize: '0.8em',
+                foreColor: fontColor
+            }
+        },
+        legend: {
+            labels: {
+                colors: fontColor
             }
         },
         fill: {
             colors: ['red', 'green', 'blue', 'yellow']
+        },
+        animations: {
+            enabled: true,
+            easing: 'easeinout',
+            speed: 3000
         }
     }
 
@@ -229,10 +258,11 @@ function printVitaminsDiagram(vitaminA, vitaminC, vitaminD, vitaminB6, vitaminB1
     let vitaminB6Value = parseFloat(vitaminB6[1].split(' ')[0]);
     let vitaminB12Value = parseFloat(vitaminB12[1].split(' ')[0]) / 1000;
 
+   
     let options = {
         chart: {
             type: 'donut',
-            height: '600px',
+            height: '500px',
             width: '100%'
         },
         title: {
@@ -240,7 +270,8 @@ function printVitaminsDiagram(vitaminA, vitaminC, vitaminD, vitaminB6, vitaminB1
             align: 'center',
             style: {
                 fontSize: '18px',
-                fontWeight: 'bold'
+                fontWeight: 'bold',
+                color: fontColor
             }
         },
         series: [
@@ -257,10 +288,24 @@ function printVitaminsDiagram(vitaminA, vitaminC, vitaminD, vitaminB6, vitaminB1
             `${vitaminB6[0]}, ${vitaminB6Value}mg`,
             `${vitaminB12[0]}, ${vitaminB12Value}mg`
         ],
-        legend: {
-            posistion: 'bottom'
+        dataLabels: {
+            style: {
+                fontSize: '0.8em',
+                foreColor: fontColor
+            }
         },
-        colors: ['aqua' , 'crimson', 'yellow', 'green', 'orange']
+        legend: {
+            position: 'top',
+            labels: {
+                colors: fontColor
+            }
+        },
+        colors: ['aqua' , 'crimson', 'yellow', 'green', 'orange'],
+        animations: {
+            enabled: true,
+            easing: 'easeinout',
+            speed: 3000
+        }
     };
 
     let chart = new ApexCharts(vitaminDiagram, options);
@@ -279,12 +324,11 @@ function printMineralsDiagram(calcium, iron, magnesuim, zinc, potassium) {
     let zincValue = parseFloat(zinc[1].split(' ')[0]);
     let potassiumValue = parseFloat(potassium[1].split(' ')[0]);
 
-    
 
     let options = {
         chart: {
             type: 'bar',
-            height: '600px',
+            height: '400px',
             weight: '100%'
         },
         title: {
@@ -292,7 +336,8 @@ function printMineralsDiagram(calcium, iron, magnesuim, zinc, potassium) {
             align: 'center',
             style: {
                 fontSize: '18px',
-                fontWeight: 'bold'
+                fontWeight: 'bold',
+                color: fontColor
             }
         },
         series: [
@@ -306,8 +351,9 @@ function printMineralsDiagram(calcium, iron, magnesuim, zinc, potassium) {
                     potassiumValue
                 ],
                 style: {
-                    fontSize: '18px',
-                    fontWeight: 'bold'
+                    fontSize: '0.8em',
+                    fontWeight: 'bold',
+                    foreColor: fontColor
                 }
             }
         ],
@@ -321,12 +367,18 @@ function printMineralsDiagram(calcium, iron, magnesuim, zinc, potassium) {
             ],
             labels: {
                 style: {
-                    fontSize: '1em'
+                    fontSize: '0.8em',
+                    colors: fontColor
                 }
             }
         },
         fill: {
-            colors: ['grey']
+            colors: ['blue']
+        },
+        animations: {
+            enabled: true,
+            easing: 'easeinout',
+            speed: 3000
         }
     }
 
@@ -335,8 +387,11 @@ function printMineralsDiagram(calcium, iron, magnesuim, zinc, potassium) {
 }
 
 /**
- * 
+ * Funktion för att kontrollera om temat är mörkt
  */
+function isDarkTheme() {
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
 
 
 // Skriva ut närings rekommendation

@@ -1,4 +1,6 @@
 @use 'variables';
+@use 'keyframes';
+@use 'mixin';
 
 * {
     margin: 0;
@@ -9,8 +11,10 @@ body {
     max-width: 1600px;
     margin: 0 auto;
     font-family: variables.$font-family;
+    line-height: variables.$font-height;
 }
 
+// Sidhuvud
 header {
     background-color: variables.$header-footer-background;
     color: variables.$header-footer-color;
@@ -20,10 +24,31 @@ header {
     }
 }
 
+// Färgvariabler
+@property --color-1 {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #7F8CAA;
+}
+@property --color-2 {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #B8CFCE;
+}
+
+// Huvudinnehåll
 main {
     min-height: 500px;
     max-width: 1000px;
     margin: 1% auto;
+    opacity: 0;
+    animation: fadeIn 1s ease forwards;
+    border: 1px solid black;
+    box-shadow: 2px 3px grey;
+    padding: 1%;
+    h2 {
+        margin: 1% 0;
+    }
     p {
         max-width: 60ch;
     }
@@ -35,20 +60,134 @@ main {
         }
     }
     #btn {
-        padding: 0 1%;
-        background-color: variables.$header-footer-background;
+        --color-1: #7F8CAA;
+        --color-2: #B8CFCE;
+        padding: 0.5 1%;
+        background: linear-gradient(45deg, var(--color-1), var(--color-2));
         color: variables.$header-footer-color;
         cursor: pointer;
+        transition: all 0.7s linear;
+        color: black;
         &:hover {
-            background-color: variables.$hover-color;
-            color: black;
+            transform: scale(1.1);
+            --color-1: #B8CFCE;
+            --color-2: #7F8CAA;
         }
+    }
+    #results {
+        
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-auto-rows: auto;
+        gap: 2%;
+    }
+    #recommendation {
+        grid-row: 1;
+        grid-column: 1;
+        ul {
+            padding: 1% 3%;
+        }
+        li {
+            max-width: 60ch;
+        }
+    }
+    #caloric-needs {
+        grid-row: 1;
+        grid-column: 2;
+        justify-self: center;
+    }
+    #macronutrients-diagram {
+        grid-row: 2;
+        grid-column: 1;
+        &:hover {
+            animation: showResults 1s linear forwards;
+        }
+    }
+    #vitamin-diagram {
+        grid-row: 2;
+        grid-column: 2;
+        &:hover {
+            animation: showResults 1s linear forwards;
+        }
+    }
+    #minerals-diagram {
+        grid-row: 3;
+        grid-column: 1 / 3;
+        margin-bottom: 5%;
     }
 }
 
+// Sidfot
 footer {
     background-color: variables.$header-footer-background;
     color: variables.$header-footer-color;
     text-align: center;
     padding: 1% 0;
+    margin-top: 2%;
+    margin-bottom: 0;
+}
+
+// Stilsättning för ljust läge
+@media (prefers-color-scheme: light) {
+    body {
+        @include mixin.theme-color(light);
+    }
+}
+
+// Stilsättning för mörkt läge
+@media (prefers-color-scheme: dark) {
+    body {
+        @include mixin.theme-color(dark);
+    }
+    main {
+        border: 1px solid white;
+        box-shadow: 2px 3px black;
+        form {
+            background-color: darken(variables.$hover-color, 40%);
+        }
+    }
+
+}
+
+// Stillsättning för mindre skärm
+@media screen and (max-width: 800px) {
+    $font-size: 0.9em; 
+    body {
+        font-size: $font-size;
+    }
+    main {
+        #results {
+            grid-template-columns: 1fr;
+        }
+        #recommendation {
+            grid-row: 1;
+            grid-column: 1;
+        }
+        #caloric-needs {
+            grid-row: 2;
+            grid-column: 1;
+            justify-self: center;
+            align-self: center;
+        }
+        #macronutrients-diagram {
+            grid-row: 3;
+            grid-column: 1;
+            justify-self: center;
+            align-self: center;
+        }
+        #vitamin-diagram {
+            grid-row: 4;
+            grid-column: 1;
+            justify-self: center;
+            align-self: center;
+        }
+        #minerals-diagram {
+            grid-row: 5;
+            grid-column: 1;
+            margin-bottom: 19%;
+        }
+    }
+    footer {
+        margin-top: 5%;
+    }
 }
