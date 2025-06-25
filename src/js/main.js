@@ -32,9 +32,64 @@ btnEl.addEventListener('click', function(event){   event.preventDefault();
 });
 
 // Funktioner
-async function getData() {
+
+// Funktion för kontrollera inmatning
+function inputCheck() {
     let lengthValue = lengthInput.value;
     let weightValue = weightInput.value;
+    let ageValue = ageInput.value;
+
+    let lengthError = document.getElementById('length-error');
+    let weightError = document.getElementById('weight-error');
+    let ageError = document.getElementById('age-error');
+    let genderError = document.getElementById('sex-error');
+    
+    let isValid = true;
+    if(!lengthValue) {
+        lengthError.innerHTML = 'Du måste fylla i längden';
+        lengthError.style.color = 'red';
+        isValid = false;
+    } else {
+        lengthError.innerHTML = '';
+    }
+
+    if(!weightValue) {
+        weightError.innerHTML = 'Du måste fylla i vikten';
+        weightError.style.color = 'red';
+        isValid = false;
+    } else {
+        weightError.innerHTML = '';
+    }
+    
+    if(!ageValue) {
+        ageError.innerHTML = 'Du måste fylla i ålder';
+        ageError.style.color = 'red';
+        isValid = false;
+    } else {
+        ageError.innerHTML = '';
+    }
+
+    if(!maleChoice.checked && !femaleChoice.checked) {
+        genderError.innerHTML = 'Du måste välja Man/kvinna';
+        genderError.style.color = 'red';
+        isValid = false;
+    } else {
+        genderError.innerHTML = '';
+    }
+
+    
+    return isValid;
+}
+
+
+async function getData() {
+    if(!inputCheck()) {
+        return;
+    }
+    
+    let lengthValue = lengthInput.value;
+    let weightValue = weightInput.value;
+    
     let url = `https://api.apiverve.com/v1/bmicalculator?weight=${weightValue}&height=${lengthValue}&unit=metric`;
 
     try {
@@ -394,7 +449,7 @@ function isDarkTheme() {
 }
 
 
-// Skriva ut närings rekommendation
+
 
 /**
  * Funktion för att översätter response från engelska till Svenska
