@@ -31,6 +31,39 @@ btnEl.addEventListener('click', function(event){   event.preventDefault();
     getData();
 });
 
+// btnEl.addEventListener('click', function(event){   event.   preventDefault();     
+//     printSwedishText(text);
+// });
+
+/**
+ * Funktion för att översätter response från engelska till Svenska
+ */
+
+async function translateToSwedish(text) {
+    // Google translate API
+    let url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=sv&dt=t&q=${encodeURIComponent(text)}`;
+    
+    try {
+        let response = await fetch(url);
+        let data = await response.json();
+        // console.log(data[0][0][0]);
+        return data[0][0][0];
+    } catch(error) {
+        console.error('Fel vid översättning');
+    }
+}
+
+async function printSwedishText(text) {
+
+    try {
+        return await translateToSwedish(text);
+        
+    } catch (err) {
+        console.error('Fel vid utskrift:', err);
+        return 'Översättning misslyckades';
+    }
+}
+
 // Funktioner
 
 // Funktion för kontrollera inmatning
@@ -116,7 +149,7 @@ async function getData() {
 /**
  * Rekommendation beroende på bmi
  */
-function printAnalys(data) {
+async function printAnalys(data) {
     recommendationDiv.innerHTML = '';
     
     let dataList = document.createElement('ul');
@@ -124,13 +157,13 @@ function printAnalys(data) {
     bmiData.textContent = `Din BMI: ${data.bmi}`;
 
     let riskData = document.createElement('li');
-    riskData.textContent = `Risk: ${data.risk}`;
+    riskData.textContent = `Risk: ${await printSwedishText(data.risk)}`;
     
     let summaryData = document.createElement('li');
-    summaryData.textContent = `Sammanfattning ${data.summary}`;
+    summaryData.textContent = `Sammanfattning: ${await printSwedishText(data.summary)}`;
 
     let recommendationData = document.createElement('li');
-    recommendationData.textContent = `Rekommendation: ${data.recommendation}`;
+    recommendationData.textContent = `Rekommendation: ${await printSwedishText(data.recommendation)}`;
 
     dataList.appendChild(bmiData);
     dataList.appendChild(riskData);
@@ -220,14 +253,15 @@ async function getNutrition(bmi) {
 }
 
 // Funktion för kaloribehov
-function printCloricsNeed(data) {
+async function printCloricsNeed(data) {
     caloricDiv.innerHTML = '';
 
     let caloryTitle = document.createElement('h3');
     caloryTitle.textContent = 'Ditt dagliga kaloribehov';
 
     let caloricParagraph = document.createElement('p');
-    caloricParagraph.textContent = data['Estimated Daily Caloric Needs'];
+    caloricParagraph.textContent = await printSwedishText(data['Estimated Daily Caloric Needs']);
+    
     caloricDiv.appendChild(caloryTitle);
     caloricDiv.appendChild(caloricParagraph);
 }
@@ -238,7 +272,7 @@ function reRenderCharts() {
     printMineralsDiagram(calcium, iron, magnesuim, zinc, potassium);
 }
 // // Funktion för att skapa diagram rekommenderade näringsinnehåll
-function printMacronutrientsDiagram(protein, carbs, fat, fibers) {
+async function printMacronutrientsDiagram(protein, carbs, fat, fibers) {
 
     macronutrientsDiagram.innerHTML = '';
 
@@ -271,10 +305,10 @@ function printMacronutrientsDiagram(protein, carbs, fat, fibers) {
             fibersValue
         ],
         labels: [
-            `${protein[0]}, ${proteinValue}g`,
-            `${carbs[0]}, ${carbsValue}g`,
-            `${fat[0]}, ${fatValue}g`,
-            `${fibers[0]}, ${fibersValue}g`
+            `${await printSwedishText(protein[0])}, ${proteinValue}g`,
+            `${await printSwedishText (carbs[0])}, ${carbsValue}g`,
+            `${await printSwedishText (fat[0])}, ${fatValue}g`,
+            `${await printSwedishText (fibers[0])}, ${fibersValue}g`
         ],
         dataLabels: {
             enabled: true,
@@ -303,7 +337,7 @@ function printMacronutrientsDiagram(protein, carbs, fat, fibers) {
 }
 
 // Funktion för att skapa diagram för rekommenderade vitaminer
-function printVitaminsDiagram(vitaminA, vitaminC, vitaminD, vitaminB6, vitaminB12) {
+async function printVitaminsDiagram(vitaminA, vitaminC, vitaminD, vitaminB6, vitaminB12) {
 
     vitaminDiagram.innerHTML = '';
 
@@ -337,11 +371,11 @@ function printVitaminsDiagram(vitaminA, vitaminC, vitaminD, vitaminB6, vitaminB1
             vitaminB12Value
         ],
         labels: [
-            `${vitaminA[0]}, ${vitaminAValue}mg`,
-            `${vitaminC[0]}, ${vitaminCValue}mg`,
-            `${vitaminD[0]}, ${vitaminDValue}mg`,
-            `${vitaminB6[0]}, ${vitaminB6Value}mg`,
-            `${vitaminB12[0]}, ${vitaminB12Value}mg`
+            `${await printSwedishText(vitaminA[0])}, ${vitaminAValue}mg`,
+            `${await printSwedishText(vitaminC[0])}, ${vitaminCValue}mg`,
+            `${await printSwedishText(vitaminD[0])}, ${vitaminDValue}mg`,
+            `${await printSwedishText(vitaminB6[0])}, ${vitaminB6Value}mg`,
+            `${await printSwedishText(vitaminB12[0])}, ${vitaminB12Value}mg`
         ],
         dataLabels: {
             style: {
@@ -369,7 +403,7 @@ function printVitaminsDiagram(vitaminA, vitaminC, vitaminD, vitaminB6, vitaminB1
 }
 
 // Funktion för att skapa diagram rekommenderade mineraler
-function printMineralsDiagram(calcium, iron, magnesuim, zinc, potassium) {
+async function printMineralsDiagram(calcium, iron, magnesuim, zinc, potassium) {
 
     mineralsDiagram.innerHTML = '';
 
@@ -414,11 +448,11 @@ function printMineralsDiagram(calcium, iron, magnesuim, zinc, potassium) {
         ],
         xaxis: {
             categories: [
-                `${calcium[0]}, ${calciumValue}mg`,
-                `${iron[0]}, ${ironValue}mg`,
-                `${magnesuim[0]}, ${magnesuimValue}mg`,
-                `${zinc[0]}, ${zincValue}mg`,
-                `${potassium[0]}, ${potassiumValue}mg`
+                `${await printSwedishText(calcium[0])}, ${calciumValue}mg`,
+                `${await printSwedishText(iron[0])}, ${ironValue}mg`,
+                `${await printSwedishText(magnesuim[0])}, ${magnesuimValue}mg`,
+                `${await printSwedishText(zinc[0])}, ${zincValue}mg`,
+                `${await printSwedishText(potassium[0])}, ${potassiumValue}mg`
             ],
             labels: {
                 style: {
@@ -451,19 +485,3 @@ function isDarkTheme() {
 
 
 
-/**
- * Funktion för att översätter response från engelska till Svenska
- */
-
-async function translateToSwedish(text) {
-    // Google translate API
-    let url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=sv&dt=t&q=${encodeURIComponent(text)}`;
-
-    try {
-        let response = await fetch(url);
-        let data = await response.json();
-        return data[0][0][0];
-    } catch(error) {
-        console.error('Fel vid översättning');
-    }
-}
