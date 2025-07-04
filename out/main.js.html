@@ -1,4 +1,32 @@
-"use strict";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: main.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: main.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
 
 // Variabler
 let lengthInput = document.getElementById('length');
@@ -36,12 +64,12 @@ btnEl.addEventListener('click', function(event){   event.preventDefault();
  * @function translateToSwedish Funktion för att översätter response från engelska till Svenska
  * @async 
  * @param {string} text - Texten på engelska som ska översättas till Svenska
- * @return {Promise<string|undefined>} En Promise som returnerar den svenska översättningen eller 'undefined' om ett fel inträffar.  
+ * @return {Promise&lt;string|undefined>} En Promise som returnerar den svenska översättningen eller 'undefined' om ett fel inträffar.  
  */
 
 async function translateToSwedish(text) {
     // Google translate API
-    let url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=sv&dt=t&q=${encodeURIComponent(text)}`;
+    let url = `https://translate.googleapis.com/translate_a/single?client=gtx&amp;sl=en&amp;tl=sv&amp;dt=t&amp;q=${encodeURIComponent(text)}`;
     
     try {
         let response = await fetch(url);
@@ -57,7 +85,7 @@ async function translateToSwedish(text) {
  * @async 
  * @function printSwedishText Hämtar den svenska översättningen för en given text och returnerar den.
  * @param {string} text - Texten som översättas
- * @returns {Promise<string>} Promise som returnerar den svenska översättningen eller 'undefined' om ett fel inträffar.
+ * @returns {Promise&lt;string>} Promise som returnerar den svenska översättningen eller 'undefined' om ett fel inträffar.
  */
 async function printSwedishText(text) {
 
@@ -111,7 +139,7 @@ function inputCheck() {
         ageError.innerHTML = '';
     }
 
-    if(!maleChoice.checked && !femaleChoice.checked) {
+    if(!maleChoice.checked &amp;&amp; !femaleChoice.checked) {
         genderError.innerHTML = 'Du måste välja Man/kvinna';
         genderError.style.color = 'red';
         isValid = false;
@@ -126,7 +154,7 @@ function inputCheck() {
 /**
  * @async
  * @function getData Hämtar BMI-data från BMI API baserat på användarens längd och vikt.
- * @returns {Promise<void>} En Promise som indikerar när alla data är hämtade
+ * @returns {Promise&lt;void>} En Promise som indikerar när alla data är hämtade
  */
 async function getData() {
     if(!inputCheck()) {
@@ -136,7 +164,7 @@ async function getData() {
     let lengthValue = lengthInput.value;
     let weightValue = weightInput.value;
     
-    let url = `https://api.apiverve.com/v1/bmicalculator?weight=${weightValue}&height=${lengthValue}&unit=metric`;
+    let url = `https://api.apiverve.com/v1/bmicalculator?weight=${weightValue}&amp;height=${lengthValue}&amp;unit=metric`;
 
     try {
         let response = await fetch(url, {
@@ -163,7 +191,7 @@ async function getData() {
  *  @async 
  *  @function printAnalys funktion som skriver analys samt rekommendation beroende på bmi
  *  @param {Object} data - Objekt med dataanalys från BMI API
- * @returns {Promise<void>} En Promise som indikerar att analysen har skrivits ut 
+ * @returns {Promise&lt;void>} En Promise som indikerar att analysen har skrivits ut 
  */
 async function printAnalys(data) {
     recommendationDiv.innerHTML = '';
@@ -195,14 +223,14 @@ import ApexCharts from "apexcharts";
  * @async
  * @function getNutrition hämtar näringsinformation från Nutrition Calculator API basrat på användarens BMI, längd, vikt, ålder och kön
  * @param {number} bmi - Användarens BMI-värde hämtat från BMI-API
- * @returns {Promise<void>} En Promise som indikerar när alla data är hämtade  
+ * @returns {Promise&lt;void>} En Promise som indikerar när alla data är hämtade  
  */
 async function getNutrition(bmi) {
     // Rekommenderat aktivitetnivå
     let activityLevel = '';
-    if(bmi < 18.5) { activityLevel = 'Inactive';}
-    if(bmi >= 18.5 && bmi < 25) { activityLevel = 'Active';}
-    if(bmi >= 25 && bmi < 30) { activityLevel = 'Low Active';}
+    if(bmi &lt; 18.5) { activityLevel = 'Inactive';}
+    if(bmi >= 18.5 &amp;&amp; bmi &lt; 25) { activityLevel = 'Active';}
+    if(bmi >= 25 &amp;&amp; bmi &lt; 30) { activityLevel = 'Low Active';}
     if(bmi >= 30) { activityLevel = 'Very Active';}
     
     let lengthValue = lengthInput.value;
@@ -217,7 +245,7 @@ async function getNutrition(bmi) {
         genderChoice = 'female';
     }
     // API-länk
-    let url = `https://nutrition-calculator.p.rapidapi.com/api/nutrition-info?measurement_units=met&sex=${genderChoice}&age_value=${ageValue}&age_type=yrs&cm=${lengthValue}&kilos=${weightValue}&activity_level=${activityLevel}`
+    let url = `https://nutrition-calculator.p.rapidapi.com/api/nutrition-info?measurement_units=met&amp;sex=${genderChoice}&amp;age_value=${ageValue}&amp;age_type=yrs&amp;cm=${lengthValue}&amp;kilos=${weightValue}&amp;activity_level=${activityLevel}`
 
     try {
         let response = await fetch(url, {
@@ -275,7 +303,7 @@ async function getNutrition(bmi) {
  * @async 
  * @function printCloricsNeed Visar användarens uppskattade dagliga kaloribehov
  * @param {Object} data - Objekt med Kaloribehov
- * @returns {Promise<void>} En Promise som indikerar när HTML-innehållet skapats
+ * @returns {Promise&lt;void>} En Promise som indikerar när HTML-innehållet skapats
  */
 async function printCloricsNeed(data) {
     caloricDiv.innerHTML = '';
@@ -297,7 +325,7 @@ async function printCloricsNeed(data) {
  * @param {[string, string]} carbs - kolhydrat-array med namn och värde
  * @param {[string, string]} fat - fett-array med namn och värde
  * @param {[string, string]} fibers - fibers-array med namn och värde
- * @returns {Promise<void>} En Promise som indikerar när diagrammet är renderart
+ * @returns {Promise&lt;void>} En Promise som indikerar när diagrammet är renderart
  * */ 
 async function printMacronutrientsDiagram(protein, carbs, fat, fibers) {
 
@@ -371,7 +399,7 @@ async function printMacronutrientsDiagram(protein, carbs, fat, fibers) {
  * @param {[string, string]} vitaminD Vitamin D-info.
  * @param {[string, string]} vitaminB6 Vitamin B6-info.
  * @param {[string, string]} vitaminB12 Vitamin B12-info.
- * @returns {Promise<void>} En Promise som indikerar nä diagrammet är renderart 
+ * @returns {Promise&lt;void>} En Promise som indikerar nä diagrammet är renderart 
  * */ 
 async function printVitaminsDiagram(vitaminA, vitaminC, vitaminD, vitaminB6, vitaminB12) {
 
@@ -446,7 +474,7 @@ async function printVitaminsDiagram(vitaminA, vitaminC, vitaminD, vitaminB6, vit
  * @param {[string, string]} magnesuim - Magnesiuminfo
  * @param {[string, string]} zinc - Zinkinfo
  * @param {[string, string]} potassium Kaliuminfo.
- * @returns {Promise<void>} En Promise som indikerar när diagrammet är renderart
+ * @returns {Promise&lt;void>} En Promise som indikerar när diagrammet är renderart
  */
 async function printMineralsDiagram(calcium, iron, magnesuim, zinc, potassium) {
 
@@ -525,9 +553,32 @@ async function printMineralsDiagram(calcium, iron, magnesuim, zinc, potassium) {
  * @returns {boolean} Returnerar true om avnändaren har valt mörkt tema, annars false.
  */
 function isDarkTheme() {
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return window.matchMedia &amp;&amp; window.matchMedia('(prefers-color-scheme: dark)').matches;
 }
 
 
 
 
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#getDataH%25C3%25A4mtarBMI-datafr%25C3%25A5nBMIAPIbaseratp%25C3%25A5anv%25C3%25A4ndarensl%25C3%25A4ngdochvikt.">getData Hämtar BMI-data från BMI API baserat på användarens längd och vikt.</a></li><li><a href="global.html#isDarkThemeFunktionf%25C3%25B6rattkontrolleraomtemat%25C3%25A4rm%25C3%25B6rkt">isDarkTheme Funktion för att kontrollera om temat är mörkt</a></li><li><a href="global.html#printAnalysfunktionsomskriveranalyssamtrekommendationberoendep%25C3%25A5bmi">printAnalys funktion som skriver analys samt rekommendation beroende på bmi</a></li><li><a href="global.html#printCloricsNeedVisaranv%25C3%25A4ndarensuppskattadedagligakaloribehov">printCloricsNeed Visar användarens uppskattade dagliga kaloribehov</a></li><li><a href="global.html#printMacronutrientsDiagramFunktionsomskapardiagramf%25C3%25B6rderekommenderaden%25C3%25A4ringsinneh%25C3%25A5ll">printMacronutrientsDiagram Funktion som skapar diagram för de rekommenderade näringsinnehåll</a></li><li><a href="global.html#printMineralsDiagramsomskapadiagramf%25C3%25B6rrekommenderademineraler">printMineralsDiagram som skapa diagram för rekommenderade mineraler</a></li><li><a href="global.html#printSwedishTextH%25C3%25A4mtardensvenska%25C3%25B6vers%25C3%25A4ttningenf%25C3%25B6rengiventextochreturnerarden.">printSwedishText Hämtar den svenska översättningen för en given text och returnerar den.</a></li><li><a href="global.html#printVitaminsDiagramsomskapardiagramf%25C3%25B6rrekommenderadevitaminer">printVitaminsDiagram som skapar diagram för rekommenderade vitaminer</a></li><li><a href="global.html#translateToSwedishFunktionf%25C3%25B6ratt%25C3%25B6vers%25C3%25A4tterresponsefr%25C3%25A5nengelskatillSvenska">translateToSwedish Funktion för att översätter response från engelska till Svenska</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Jul 04 2025 12:23:28 GMT+0200 (centraleuropeisk sommartid)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
